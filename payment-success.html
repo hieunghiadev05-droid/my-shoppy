@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Thanh toán thành công</title>
+
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 18px;
+      background: #f5f5f5;
+    }
+
+    .card {
+      max-width: 420px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 10px;
+      background: #ffffff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .ok {
+      color: #16a34a;
+      font-weight: bold;
+      font-size: 22px;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      background: #007bff;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .success-icon {
+      font-size: 50px;
+      color: #16a34a;
+    }
+
+    #details {
+      text-align: left;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+    <div class="success-icon">✔</div>
+    <h2 class="ok">Thanh toán thành công</h2>
+
+    <div id="details"></div>
+
+    <a class="button" href="index.html#order-history">Xem đơn hàng</a>
+  </div>
+
+  <!-- 🔥 QUAN TRỌNG: PHẢI CÓ SCRIPT -->
+  <script>
+
+    // 🔥 XÓA GIỎ HÀNG NGAY KHI VÀO TRANG
+    function clearCart() {
+      localStorage.removeItem("cart");
+
+      const user = JSON.parse(localStorage.getItem("currentuser") || "{}");
+      if (user.cart) {
+        user.cart = [];
+        localStorage.setItem("currentuser", JSON.stringify(user));
+      }
+    }
+
+    function vnd(n) {
+      return parseInt(n || 0).toLocaleString('vi-VN') + ' đ';
+    }
+
+    function getProductTitle(id) {
+      const products = JSON.parse(localStorage.getItem('products') || '[]');
+      const product = products.find(item => item.id == id);
+      return product ? product.title : 'Sản phẩm';
+    }
+
+    function renderItems(items) {
+      if (!items || !items.length) return '';
+
+      return `
+        <div style="margin-top:15px;padding:12px;border:1px solid #ddd;border-radius:8px;">
+          <h3>Chi tiết đơn hàng</h3>
+          ${items.map(item => `
+            <div style="margin-bottom:10px">
+              <strong>${getProductTitle(item.id)}</strong><br>
+              Số lượng: ${item.soluong}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // 🔥 LẤY PARAM
+    const params = new URLSearchParams(location.search);
+    const id = params.get("paymentId");
+
+    const details = document.getElementById("details");
+
+    if (id) {
+      clearCart(); // 🔥 FIX CHÍNH
+
+      const pending = JSON.parse(localStorage.getItem("pendingPaymentOrder") || "null");
+
+      if (pending) {
+        details.innerHTML = `
+          <p><strong>Mã thanh toán:</strong> ${id}</p>
+          <p><strong>Tên người nhận:</strong> ${pending.tennguoinhan}</p>
+          <p><strong>SĐT:</strong> ${pending.sdtnhan}</p>
+          <p><strong>Địa chỉ:</strong> ${pending.diachinhan}</p>
+          ${renderItems(pending.cart || [pending.product])}
+        `;
+
+        // Xóa đơn chờ
+        localStorage.removeItem("pendingPaymentOrder");
+      }
+    }
+
+    // 🔥 TỰ CHUYỂN TRANG
+    setTimeout(() => {
+      window.location.href = "index.html#order-history";
+    }, 3000);
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Thanh toán QR</title>
+
+  <style>
+    body{
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 18px;
+      background: #f5f5f5;
+    }
+
+    .card{
+      max-width: 420px;
+      margin: 20px auto;
+      padding: 18px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    h2{
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .small{
+      font-size: 13px;
+      color: #555;
+    }
+
+    input, button{
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button{
+      background: #8b3a4a;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover{
+      opacity: 0.9;
+    }
+
+    .qr{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 12px 0;
+      height: 250px;
+      border: 1px dashed #e0e0e0;
+      border-radius: 10px;
+      padding: 10px;
+      background: #fff;
+    }
+
+    /* 🔥 Fix ảnh không bị bự */
+    .qr img{
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h2>Thanh toán online (QR)</h2>
+
+    <label class="small">Số tiền (VND)</label>
+    <input id="amount" type="number" value="10000" />
+
+    <div class="small">
+      Quét mã bằng app hoặc mở link trên điện thoại
+    </div>
+
+    <div class="qr"></div>
+
+    <button id="regen">Tạo mã mới</button>
+    <button id="openLink">Mở link thanh toán</button>
+
+    <p class="small">Payment ID: <span id="pid"></span></p>
+  </div>
+
+  <!-- QR Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+    function uid(){
+      return 'p' + Date.now().toString(36)
+    }
+
+    function by(id){
+      return document.getElementById(id)
+    }
+
+    const params = new URLSearchParams(location.search)
+
+    let paymentId = params.get('paymentId') || uid()
+    by('pid').textContent = paymentId
+
+    if (params.get('amount')) {
+      by('amount').value = params.get('amount')
+    }
+
+    function buildUrls(){
+      const base = location.href.replace(/[^\/]*$/, '')
+
+      const returnUrl =
+        base + 'payment-success.html?paymentId=' +
+        paymentId + '&status=success'
+
+      const momoUrl =
+        base + 'mobile_checkout.html?paymentId=' +
+        paymentId +
+        '&amount=' + encodeURIComponent(by('amount').value) +
+        '&returnUrl=' + encodeURIComponent(returnUrl)
+
+      return { momoUrl, returnUrl }
+    }
+
+    function renderQR(){
+      const urls = buildUrls()
+      const qrContainer = document.querySelector('.qr')
+
+      qrContainer.innerHTML = ''
+
+      if (window.QRCode) {
+        const node = document.createElement('div')
+        qrContainer.appendChild(node)
+
+        new QRCode(node, {
+          text: urls.momoUrl,
+          width: 220,
+          height: 220
+        })
+      } else {
+        const img = document.createElement('img')
+        img.src =
+          'https://chart.googleapis.com/chart?chs=220x220&cht=qr&chl=' +
+          encodeURIComponent(urls.momoUrl)
+
+        qrContainer.appendChild(img)
+      }
+
+      by('openLink').dataset.url = urls.momoUrl
+    }
+
+    by('regen').addEventListener('click', () => {
+      paymentId = uid()
+      by('pid').textContent = paymentId
+      renderQR()
+    })
+
+    by('openLink').addEventListener('click', () => {
+      const u = by('openLink').dataset.url || buildUrls().momoUrl
+      location.href = u
+    })
+
+    renderQR()
+  </script>
+</body>
+</html>

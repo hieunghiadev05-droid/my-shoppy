@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tin tức - Công Vinh Shop</title>
+    <link href='assets/img/Công vinh shop.png' rel='icon' type='image/x-icon' />
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/home-responsive.css">
+    <link rel="stylesheet" href="assets/css/toast-message.css">
+    <link rel="stylesheet" href="assets/font/font-awesome-pro-v6-6.2.0/css/all.min.css" />
+    <style>
+        .news-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .news-title {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 40px;
+            color: #1b714f;
+        }
+
+        .news-subtitle {
+            text-align: center;
+            font-size: 26px;
+            margin: 60px 0 30px;
+            color: #1b714f;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .news-item {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .news-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .news-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .news-content {
+            padding: 20px;
+        }
+
+        .news-content h3 {
+            font-size: 20px;
+            margin: 0 0 10px;
+            color: #333;
+        }
+
+        .news-content p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .news-date {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        .read-more {
+            color: #1b714f;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .read-more:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .news-item img {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- HEADER GIỮ NGUYÊN TỪ INDEX.HTML -->
+    <header>
+        <div class="header-top">
+            <div class="container">
+                <div class="header-top-left">
+                    <ul class="header-top-list">
+                        <li><a href=""><i class="fa-regular fa-phone"></i> 0123 456 789 (miễn phí)</a></li>
+                        <li><a href=""><i class="fa-light fa-location-dot"></i> Xem vị trí cửa hàng</a></li>
+                    </ul>
+                </div>
+                <div class="header-top-right">
+                    <ul class="header-top-list">
+                        <li><a href="">Giới thiệu</a></li>
+                        <li><a href="">Cửa hàng</a></li>
+                        <li><a href="">Chính sách</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="header-middle">
+            <div class="container">
+                <div class="header-middle-left">
+                    <div class="header-logo" style="display: flex; align-items: center;">
+                        <a href="index.html">
+                            <img src="assets/img/Công vinh shop.png" alt="" style="height: 50px; margin-right: 10px;">
+                        </a>
+                        <span style="font-size: 24px; font-weight: bold; color: #1b714f;">Công Vinh Shop </span>
+                    </div>
+                </div>
+                <div class="header-middle-center">
+                    <form action="" class="form-search">
+                        <span class="search-btn"><i class="fa-light fa-magnifying-glass"></i></span>
+                        <input type="text" class="form-search-input" placeholder="Tìm kiếm " oninput="searchProducts()">
+                        <button class="filter-btn"><i class="fa-light fa-filter-list"></i><span>Lọc</span></button>
+                    </form>
+                </div>
+                <div class="header-middle-right">
+                    <ul class="header-middle-right-list">
+                        <li class="header-middle-right-item dnone open" onclick="openSearchMb()">
+                            <div class="cart-icon-menu">
+                                <i class="fa-light fa-magnifying-glass"></i>
+                            </div>
+                        </li>
+                        <li class="header-middle-right-item close" onclick="closeSearchMb()">
+                            <div class="cart-icon-menu">
+                                <i class="fa-light fa-circle-xmark"></i>
+                            </div>
+                        </li>
+                        <li class="header-middle-right-item dropdown open">
+                            <i class="fa-light fa-user"></i>
+                            <div class="auth-container">
+                                <span class="text-dndk">Đăng nhập / Đăng ký</span>
+                                <span class="text-tk">Tài khoản <i class="fa-sharp fa-solid fa-caret-down"></i></span>
+                            </div>
+                            <ul class="header-middle-right-menu">
+                                <li><a id="login" href="javascript:;"><i class="fa-light fa-right-to-bracket"></i> Đăng
+                                        nhập</a></li>
+                                <li><a id="signup" href="javascript:;"><i class="fa-light fa-user-plus"></i> Đăng ký</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="header-middle-right-item open" onclick="openCart()">
+                            <div class="cart-icon-menu">
+                                <i class="fa-light fa-basket-shopping"></i>
+                                <span class="count-product-cart">0</span>
+                            </div>
+                            <span>Giỏ hàng</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MENU ĐÃ THÊM MỤC "TIN TỨC" -->
+    <nav class="header-bottom">
+        <div class="container">
+            <ul class="menu-list">
+                <!-- Chỉ mục đến trang index.html -->
+                <li class="menu-list-item">
+                    <a href="index.html" class="menu-link">Trang chủ</a>
+                </li>
+                <!-- Chỉ mục đến trang dienthoai.html -->
+                <li class="menu-list-item">
+                    <a href="dienthoai.html" class="menu-link">Điện Thoại </a>
+                </li>
+                <!-- Chỉ mục đến trang laptop.html -->
+                <li class="menu-list-item">
+                    <a href="laptop.html" class="menu-link">laptop </a>
+                </li>
+                <!-- Chỉ mục đến trang dongho.html -->
+                <li class="menu-list-item">
+                    <a href="dongho.html" class="menu-link">Đồng Hồ </a>
+                </li>
+                <!-- Chỉ mục đến trang tablet.html -->
+                <li class="menu-list-item">
+                    <a href="tablet.html" class="menu-link">Tablet </a>
+                </li>
+                <!-- Chỉ mục đến trang about.html -->
+                <li class="menu-list-item">
+                    <a href="about.html" class="menu-link">về Chúng tôi </a>
+                </li>
+                <!-- Chỉ mục đến trang tintuc.html -->
+                <li class="menu-list-item">
+                    <a href="tintuc.html" class="menu-link">Tin tức </a>
+                </li>
+                <!-- Chỉ mục đến trang manhinh.html -->
+                <li class="menu-list-item">
+                    <a href="manhinh.html" class="menu-link">Màn hình </a>
+                </li>
+                <!-- Chỉ mục đến trang BanPhim.html -->
+                <li class="menu-list-item">
+                    <a href="BanPhim.html" class="menu-link">Bàn Phím </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- NỘI DUNG TRANG TIN TỨC -->
+    <div class="news-container">
+        <h1 class="news-title">Tin tức Công nghệ & Game Mới Nhất - Tháng 12/2025</h1>
+
+        <!-- PHẦN TIN TỨC CÔNG NGHỆ -->
+        <div class="news-grid">
+            <div class="news-item">
+
+                <grok-card data-id="8ba0e2" data-type="image_card" data-arg-size="LARGE"></grok-card>
+
+                <div class="news-content">
+                    <div class="news-date">28/12/2025</div>
+                    <h3>Samsung Galaxy S25 Series ra mắt – Đỉnh cao AI Phone 2025</h3>
+                    <p>Samsung chính thức giới thiệu dòng Galaxy S25 với AI thông minh vượt trội, camera cải tiến và
+                        hiệu năng mạnh mẽ...</p>
+                    <a href="#" class="read-more">Đọc thêm →</a>
+                </div>
+            </div>
+
+            <div class="news-item">
+
+                <grok-card data-id="99af71" data-type="image_card" data-arg-size="LARGE"></grok-card>
+
+                <div class="news-content">
+                    <div class="news-date">27/12/2025</div>
+                    <h3>iPhone 17 sẽ là bước ngoặt lớn của Apple năm 2025</h3>
+                    <p>Thiết kế siêu mỏng, chip A19 mạnh mẽ và nhiều tính năng AI mới – lý do bạn nên chờ iPhone 17...
+                    </p>
+                    <a href="#" class="read-more">Đọc thêm →</a>
+                </div>
+            </div>
+
+            <div class="news-item">
+
+                <grok-card data-id="1c8bc3" data-type="image_card" data-arg-size="LARGE"></grok-card>
+
+                <div class="news-content">
+                    <div class="news-date">26/12/2025</div>
+                    <h3>Top Laptop Gaming mạnh nhất 2025 vừa lộ diện tại CES</h3>
+                    <p>ASUS ROG Strix và các mẫu laptop mới với GPU RTX 50 series mang đến trải nghiệm chơi game đỉnh
+                        cao...</p>
+                    <a href="#" class="read-more">Đọc thêm →</a>
+                </div>
+            </div>
+
+            <div class="news-item">
+
+                <grok-card data-id="a116de" data-type="image_card" data-arg-size="LARGE"></grok-card>
+
+                <div class="news-content">
+                    <div class="news-date">25/12/2025</div>
+                    <h3>Phụ kiện công nghệ hot nhất 2025 bạn nên sở hữu ngay</h3>
+                    <p>Tai nghe true wireless, smartwatch sức khỏe, sạc nhanh và gadget thông minh đang dẫn đầu xu
+                        hướng...</p>
+                    <a href="#" class="read-more">Đọc thêm →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- PHẦN TIN TỨC GAME ONLINE -->
+        <h2 class="news-subtitle">Tin tức Game Online & Mobile Hot 2025</h2>
+        <div class="news-grid">
+            <div class="news-item">
+
+                <grok-card data-id="031404" data-type="image_card" data-arg-size="LARGE"></grok-card>
+
+                <div class="news-content">
+                    <div class="news-date">28/12/2025</div>
+                    <h3>Top 10 Game Mobile Doanh Thu Cao Nhất Tháng 12/2025</h3>
+                    <p>Theo Sensor Tower: Honor of Kings, Pokémon TCG Pocket dẫn đầu, Genshin Impact và Wild Rift vẫn
+                        vững vàng...</p>
+                    <a href="#" class="read-more">Đọc thêm →</a>
+                </div>
+            </div>
+
+            <div class="news-item">
+
+                <grok-card data-id="0f1daf" data-type="image_card" data-arg-size="LARGE"></grok-card>
+
+                <div class="news-content">
+                    <div class="news-date">28/12/2025</div>
+                    <h3>GAM3S.GG công bố Top Mobile Games Q4 2025</h3>
+                    <p>Những tựa game đồ họa đẹp, gameplay đỉnh cao đang làm mưa làm gió trên Android & iOS...</p>
+                    <a href="#" class="read-more">Đọc thêm →</a>
+                </div>
+            </div>
+
+            <div class="news-item">
+
+                <grok-card data-id="726de3" data-type="image_card" data-arg-size="LARGE"></grok-card>
+
+                <div class="news-content">
+                    <div class="news-date">27/12/2025</div>
+                    <h3>Top Game Multiplayer Online Hay Nhất Để Chơi Với Bạn Bè 2025</h3>
+                    <p>Call of Duty Mobile, Roblox, PUBG Mobile và nhiều tựa game PvP hấp dẫn khác...</p>
+                    <a href="#" class="read-more">Đọc thêm →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- PHẦN TIN TỨC GAME OFFLINE -->
+        <h2 class="news-subtitle">Tin tức Game Offline & Ứng dụng Hay Nhất 2025</h2>
+        <div class="news-grid">
+            <div class="news-item">
+
+                <grok-card data-id="ea670d" data-type="image_card" data-arg-size="LARGE"></grok-card>
+
+                <div class="news-content">
+                    <div class="news-date">28/12/2025</div>
+                    <h3>10 Game Offline Mobile Hay Nhất 2025 – Không Cần Mạng Vẫn Chơi Mượt</h3>
+                    <p>FoxData bình chọn: Stardew Valley, Dead Cells, Slay the Spire dẫn đầu danh sách...</p>
+                    <a href="#" class="read-more">Đọc thêm →</a>
+                </div>
+            </div>
+
+            <div class="news-item">
+
+                <grok-card data-id="87f711" data-type="image_card" data-arg-size="LARGE"></grok-card>
+
+                <div class="news-content">
+                    <div class="news-date">27/12/2025</div>
+                    <h3>CNET công bố Best Mobile Games 2025 – Nhiều tựa Offline chất lượng</h3>
+                    <p>Dead Cells, Monument Valley và các game indie offline vẫn được yêu thích nhất...</p>
+                    <a href="#" class="read-more">Đọc thêm →</a>
+                </div>
+            </div>
+
+            <div class="news-item">
+
+                <grok-card data-id="b3277e" data-type="image_card" data-arg-size="LARGE"></grok-card>
+
+                <div class="news-content">
+                    <div class="news-date">26/12/2025</div>
+                    <h3>Top Offline Games Android & iOS Đáng Chơi Nhất Hiện Nay</h3>
+                    <p>Danh sách cập nhật mới nhất với gameplay sâu sắc, đồ họa đẹp, không cần kết nối internet...</p>
+                    <a href="#" class="read-more">Đọc thêm →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER INDEX -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-top-content">
+                    <div class="footer-top-img">
+                        <img src="assets/img/Công_vinh_shop-removebg-preview.png" alt="">
+                    </div>
+                    <div class="footer-top-subbox">
+                        <div class="footer-top-subs">
+                            <h2 class="footer-top-subs-title">Đăng ký nhận tin</h2>
+                            <p class="footer-top-subs-text">Nhận thông tin mới nhất từ chúng tôi</p>
+                        </div>
+                        <form class="form-ground">
+                            <input type="email" class="form-ground-input" placeholder="Nhập email của bạn">
+                            <button class="form-ground-btn">
+                                <span>ĐĂNG KÝ</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="widget-area">
+            <div class="container">
+                <div class="widget-row">
+                    <div class="widget-row-col-1">
+                        <h3 class="widget-title">Về chúng tôi</h3>
+                        <div class="widget-row-col-content">
+                            <p>Công Vinh Shop là thương hiệu được thành lập vào năm 2025 với tiêu chí đặt chất lượng sản
+                                phẩm lên hàng đầu.</p>
+                        </div>
+                        <div class="widget-social">
+                            <div class="widget-social-item"><a href=""><i class="fab fa-facebook-f"></i></a></div>
+                            <div class="widget-social-item"><a href="#"><i class="fab fa-twitter"></i></a></div>
+                            <div class="widget-social-item"><a href="#"><i class="fab fa-linkedin-in"></i></a></div>
+                            <div class="widget-social-item"><a href="#"><i class="fab fa-whatsapp"></i></a></div>
+                        </div>
+                    </div>
+                    <div class="widget-row-col">
+                        <h3 class="widget-title">Liên kết</h3>
+                        <ul class="widget-contact">
+                            <li class="widget-contact-item"><a href=""><i class="fa-regular fa-arrow-right"></i><span>Về
+                                        chúng tôi</span></a></li>
+                            <li class="widget-contact-item"><a href=""><i
+                                        class="fa-regular fa-arrow-right"></i><span>Thực đơn</span></a></li>
+                            <li class="widget-contact-item"><a href=""><i
+                                        class="fa-regular fa-arrow-right"></i><span>Điều khoản</span></a></li>
+                            <li class="widget-contact-item"><a href=""><i
+                                        class="fa-regular fa-arrow-right"></i><span>Liên hệ</span></a></li>
+                            <li class="widget-contact-item"><a href="admin.html"><i
+                                        class="fa-regular fa-arrow-right"></i><span>Điều Khoảng</span></a></li>
+                        </ul>
+                    </div>
+                    <div class="widget-row-col">
+                        <h3 class="widget-title">về Công ty</h3>
+                        <ul class="widget-contact">
+                            <li class="widget-contact-item"><a href=""><i
+                                        class="fa-regular fa-arrow-right"></i><span>Giới Thiệu công ty</span></a></li>
+                            <li class="widget-contact-item"><a href=""><i
+                                        class="fa-regular fa-arrow-right"></i><span>Tuyển dụng</span></a></li>
+                            <li class="widget-contact-item"><a href=""><i
+                                        class="fa-regular fa-arrow-right"></i><span>Góp Ý </span></a></li>
+                            <li class="widget-contact-item"><a href=""><i
+                                        class="fa-regular fa-arrow-right"></i><span>Thiếu nại </span></a></li>
+                            <li class="widget-contact-item"><a href=""><i
+                                        class="fa-regular fa-arrow-right"></i><span>Tráng miệng</span></a></li>
+                        </ul>
+                    </div>
+                    <div class="widget-row-col-1">
+                        <h3 class="widget-title">Liên hệ</h3>
+                        <div class="contact">
+                            <div class="contact-item">
+                                <div class="contact-item-icon"><i class="fa-regular fa-location-dot"></i></div>
+                                <div class="contact-content"><span>273 An Dương Vương, Phường 3, Quận 5, TP Hồ Chí
+                                        Minh</span></div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-item-icon"><i class="fa-regular fa-phone"></i></div>
+                                <div class="contact-content contact-item-phone"><span>0123 456 789</span><br><span>0987
+                                        654 321</span></div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-item-icon"><i class="fa-regular fa-envelope"></i></div>
+                                <div class="contact-content conatct-item-email">
+                                    <span>vinhdz1998a@gmail.com</span><br /><span>hcongzin09@gmail.com</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="copyright-wrap">
+        <div class="container">
+            <div class="copyright-content">
+                <p>Copyright 2025 cong vinh shop. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-to-top">
+        <a href="#"><i class="fa-regular fa-arrow-up"></i></a>
+    </div>
+
+    <!-- SCRIPTS GIỮ NGUYÊN -->
+    <script src="js/initialization.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/checkout.js"></script>
+    <script src="js/toast-message.js"></script>
+</body>
+
+</html>

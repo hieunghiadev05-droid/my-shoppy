@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Momo - Thanh toán</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;padding:18px}
+    .card{max-width:420px;margin:20px auto;padding:18px;border:1px solid #ddd;border-radius:8px;text-align:center}
+    button{width:100%;padding:10px;margin:8px 0;font-size:16px}
+    .small{font-size:14px;color:#333}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Momo (mô phỏng)</h2>
+    <p class="small">Đang chuẩn bị thông tin thanh toán...</p>
+    <div id="info"></div>
+    <button id="pay">Thanh toán</button>
+    <button id="cancel">Hủy</button>
+  </div>
+
+  <script>
+    function qp(){return new URLSearchParams(location.search)}
+    const q = qp()
+    const paymentId = q.get('paymentId') || 'unknown'
+    const amount = q.get('amount') || ''
+    const returnUrl = q.get('returnUrl') || ''
+
+    const info = document.getElementById('info')
+    info.innerHTML = '<p><strong>ID:</strong> ' + paymentId + '</p><p><strong>Số tiền:</strong> ' + (amount || '---') + ' VND</p>'
+
+    document.getElementById('pay').addEventListener('click', ()=>{
+      if(!returnUrl){
+        alert('Không có returnUrl. Thanh toán giả lập hoàn tất.')
+        return
+      }
+      const sep = returnUrl.includes('?') ? '&' : '?'
+      const url = returnUrl + sep + 'status=success&paymentId=' + encodeURIComponent(paymentId) + '&time=' + Date.now()
+      // Redirect back to merchant (mô phỏng hành vi app thanh toán)
+      location.href = url
+    })
+
+    document.getElementById('cancel').addEventListener('click', ()=>{
+      alert('Thanh toán đã hủy')
+    })
+  </script>
+</body>
+</html>

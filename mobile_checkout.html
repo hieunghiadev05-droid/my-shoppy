@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <title>Thanh toán - Công Vinh Shop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --green:#1b714f;--green-light:#e8f5ef;--green-dark:#145c3f;
+      --bg:#0d1117;--card:#161b22;--card2:#21262d;
+      --border:#30363d;--text:#e6edf3;--muted:#8b949e;
+      --accent:#238636;--accent-light:#2ea043;
+    }
+    html,body{height:100%;overflow-x:hidden}
+    body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+    /* Status bar simulation */
+    .statusbar{height:44px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:12px;font-weight:600;color:#fff;flex-shrink:0}
+    .sb-time{font-size:15px;font-weight:800}
+    .sb-icons{display:flex;gap:5px;align-items:center;font-size:11px}
+
+    /* Top header */
+    .topbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+    .topbar-back{width:32px;height:32px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;border:none;color:var(--text)}
+    .topbar-title{font-size:16px;font-weight:700;flex:1}
+    .topbar-secure{display:flex;align-items:center;gap:4px;font-size:11px;color:#3fb950;font-weight:600}
+    .lock-icon{font-size:13px}
+
+    /* Scrollable content */
+    .content{flex:1;overflow-y:auto;padding:16px}
+
+    /* Bank card */
+    .bank-card{background:linear-gradient(135deg,#005bac 0%,#003d7a 50%,#001f3f 100%);border-radius:18px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden}
+    .bank-card::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;background:rgba(255,255,255,.06);border-radius:50%}
+    .bank-card::after{content:'';position:absolute;bottom:-30px;left:-20px;width:100px;height:100px;background:rgba(255,255,255,.04);border-radius:50%}
+    .bc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .bc-logo{font-size:13px;font-weight:800;color:#fff;background:rgba(255,255,255,.15);padding:4px 10px;border-radius:6px;backdrop-filter:blur(4px)}
+    .bc-chip{width:32px;height:24px;background:linear-gradient(135deg,#d4af37,#f5e07a);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#7a5c00;font-weight:700}
+    .bc-amount-label{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase}
+    .bc-amount{font-size:30px;font-weight:800;color:#fff;letter-spacing:-1px}
+    .bc-bottom{display:flex;align-items:flex-end;justify-content:space-between;margin-top:16px}
+    .bc-account{font-size:13px;color:rgba(255,255,255,.7);font-weight:500}
+    .bc-owner{font-size:12px;color:#fff;font-weight:700;letter-spacing:.5px;text-align:right}
+
+    /* Info rows */
+    .info-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px}
+    .info-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border)}
+    .info-row:last-child{border-bottom:none}
+    .ir-label{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+    .ir-icon{font-size:15px;width:20px;text-align:center}
+    .ir-val{font-size:13px;font-weight:600;color:var(--text);text-align:right;max-width:55%}
+    .ir-val.green{color:#3fb950}
+    .ir-val.note-tag{background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;color:#f0c040;font-weight:700;letter-spacing:.5px}
+
+    /* Security notice */
+    .sec-notice{display:flex;align-items:center;gap:10px;background:rgba(35,134,54,.12);border:1px solid rgba(35,134,54,.3);border-radius:12px;padding:12px 14px;margin-bottom:16px}
+    .sec-notice .icon{font-size:20px;flex-shrink:0}
+    .sec-notice p{font-size:12px;color:#3fb950;line-height:1.5}
+    .sec-notice p strong{color:#56d364}
+
+    /* Confirm biometrics */
+    .bio-section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px;text-align:center}
+    .bio-icon{font-size:40px;margin-bottom:8px;cursor:pointer;user-select:none;transition:transform .2s;display:inline-block}
+    .bio-icon:active{transform:scale(.9)}
+    .bio-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+    .bio-sub{font-size:12px;color:var(--muted)}
+    .bio-status{margin-top:10px;font-size:12px;color:var(--muted);height:20px}
+
+    /* PIN pad */
+    .pin-section{display:none;padding-bottom:4px}
+    .pin-dots{display:flex;justify-content:center;gap:12px;margin-bottom:16px}
+    .pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);background:transparent;transition:.2s}
+    .pin-dot.filled{background:var(--accent-light);border-color:var(--accent-light)}
+    .pinpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .pin-btn{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px;font-size:20px;font-weight:700;color:var(--text);cursor:pointer;text-align:center;transition:.15s;font-family:inherit;-webkit-tap-highlight-color:transparent}
+    .pin-btn:active{background:#30363d;transform:scale(.95)}
+    .pin-btn.special{font-size:13px;font-weight:600;color:var(--muted)}
+    .pin-btn.del{font-size:18px}
+
+    /* CTA button */
+    .cta-wrap{padding:0 0 8px}
+    .btn-pay{width:100%;padding:16px;background:linear-gradient(135deg,var(--green) 0%,var(--green-dark) 100%);color:#fff;border:none;border-radius:14px;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:.2s;box-shadow:0 4px 15px rgba(27,113,79,.4)}
+    .btn-pay:active{transform:scale(.97)}
+    .btn-pay:disabled{background:#30363d;color:var(--muted);cursor:not-allowed;box-shadow:none}
+    .btn-cancel-mobile{width:100%;padding:13px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px}
+
+    /* Processing overlay */
+    .proc-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+    .proc-overlay.show{display:flex}
+    .proc-spinner{width:56px;height:56px;border:4px solid rgba(255,255,255,.1);border-top-color:var(--accent-light);border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .proc-text{font-size:15px;font-weight:600;color:#fff}
+
+    /* Success screen */
+    .success-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center}
+    .success-screen.show{display:flex}
+    .ss-circle{width:100px;height:100px;border-radius:50%;background:rgba(35,134,54,.15);border:3px solid var(--accent-light);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;animation:popIn .5s cubic-bezier(.34,1.56,.64,1)}
+    @keyframes popIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+    .ss-icon{font-size:50px}
+    .ss-title{font-size:24px;font-weight:800;color:#56d364;margin-bottom:8px}
+    .ss-sub{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:24px}
+    .ss-detail{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;width:100%;max-width:320px;margin-bottom:24px;text-align:left}
+    .sd-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border)}
+    .sd-row:last-child{border-bottom:none}
+    .sd-row span:first-child{color:var(--muted)}
+    .sd-row span:last-child{font-weight:700;color:var(--text)}
+    .ss-note{font-size:12px;color:var(--muted)}
+
+    /* Ripple */
+    .ripple{position:relative;overflow:hidden}
+    .ripple::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,.15);width:100px;height:100px;transform:scale(0);animation:ripple .5s ease-out;pointer-events:none}
+    @keyframes ripple{to{transform:scale(4);opacity:0}}
+  </style>
+</head>
+<body>
+
+<!-- Status bar -->
+<div class="statusbar">
+  <span class="sb-time" id="sbTime">9:41</span>
+  <div class="sb-icons">
+    <span>●●●</span>
+    <span>WiFi</span>
+    <span>🔋</span>
+  </div>
+</div>
+
+<!-- Top bar -->
+<div class="topbar">
+  <button class="topbar-back" onclick="history.back()">←</button>
+  <span class="topbar-title">Xác nhận thanh toán</span>
+  <div class="topbar-secure"><span class="lock-icon">🔒</span> Bảo mật</div>
+</div>
+
+<!-- Scrollable content -->
+<div class="content">
+
+  <!-- Bank card -->
+  <div class="bank-card">
+    <div class="bc-top">
+      <span class="bc-logo">MB BANK</span>
+      <span class="bc-chip">CHIP</span>
+    </div>
+    <div class="bc-amount-label">Số tiền thanh toán</div>
+    <div class="bc-amount" id="bcAmount">0 đ</div>
+    <div class="bc-bottom">
+      <div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:2px">Tài khoản nhận</div>
+        <div class="bc-account" id="bcBank">MB Bank - 0123456789</div>
+      </div>
+      <div class="bc-owner" id="bcOwner">CONG VINH SHOP</div>
+    </div>
+  </div>
+
+  <!-- Info rows -->
+  <div class="info-card">
+    <div class="info-row">
+      <span class="ir-label"><span class="ir-icon">🏪</span> Người nhận</span>
+      <span class="ir-val green" id="shopName">Công Vinh Shop</span>
+    </div>
+    <div class="info-row">
+      <span class="ir-label"><span class="ir-icon">💬</span> Nội dung CK</span>
+      <span class="ir-val note-tag" id="noteDisplay">CVS-...</span>
+    </div>
+    <div class="info-row">
+      <span class="ir-label"><span class="ir-icon">💳</span> Tổng tiền</span>
+      <span class="ir-val" id="totalDisplay" style="color:#e6edf3">0 đ</span>
+    </div>
+    <div class="info-row">
+      <span class="ir-label"><span class="ir-icon">⏱️</span> Thời gian</span>
+      <span class="ir-val" id="timeDisplay">--:--</span>
+    </div>
+  </div>
+
+  <!-- Security -->
+  <div class="sec-notice">
+    <span class="icon">🛡️</span>
+    <p>Giao dịch được mã hóa <strong>SSL/TLS</strong>. Thông tin thanh toán của bạn được bảo mật tuyệt đối.</p>
+  </div>
+
+  <!-- Biometrics / PIN -->
+  <div class="bio-section">
+    <div class="bio-icon" id="bioIcon" onclick="triggerBio()">👆</div>
+    <div class="bio-title">Xác nhận bằng vân tay</div>
+    <div class="bio-sub">Chạm vào icon để xác thực, hoặc dùng mã PIN</div>
+    <div class="bio-status" id="bioStatus"></div>
+    <button onclick="showPin()" style="margin-top:8px;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;font-family:inherit">Dùng mã PIN thay thế</button>
+  </div>
+
+  <!-- PIN pad (hidden by default) -->
+  <div class="pin-section" id="pinSection">
+    <div class="bio-title" style="text-align:center;margin-bottom:12px">Nhập mã PIN</div>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot"></div><div class="pin-dot"></div>
+      <div class="pin-dot"></div><div class="pin-dot"></div>
+      <div class="pin-dot"></div><div class="pin-dot"></div>
+    </div>
+    <div class="pinpad" id="pinpad">
+      <button class="pin-btn" onclick="pinPress(1)">1</button>
+      <button class="pin-btn" onclick="pinPress(2)">2</button>
+      <button class="pin-btn" onclick="pinPress(3)">3</button>
+      <button class="pin-btn" onclick="pinPress(4)">4</button>
+      <button class="pin-btn" onclick="pinPress(5)">5</button>
+      <button class="pin-btn" onclick="pinPress(6)">6</button>
+      <button class="pin-btn" onclick="pinPress(7)">7</button>
+      <button class="pin-btn" onclick="pinPress(8)">8</button>
+      <button class="pin-btn" onclick="pinPress(9)">9</button>
+      <button class="pin-btn special" onclick="showBio()">←vân tay</button>
+      <button class="pin-btn" onclick="pinPress(0)">0</button>
+      <button class="pin-btn del" onclick="pinDel()">⌫</button>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-wrap" id="ctaWrap" style="margin-top:14px">
+    <button class="btn-pay ripple" id="payBtn" onclick="doPayment()">
+      <span>💸</span> Thanh toán ngay
+    </button>
+    <button class="btn-cancel-mobile" onclick="history.back()">Hủy giao dịch</button>
+  </div>
+
+</div><!-- end content -->
+
+<!-- Processing overlay -->
+<div class="proc-overlay" id="procOverlay">
+  <div class="proc-spinner"></div>
+  <div class="proc-text" id="procText">Đang xử lý giao dịch...</div>
+</div>
+
+<!-- Success screen -->
+<div class="success-screen" id="successScreen">
+  <div class="ss-circle"><span class="ss-icon">✅</span></div>
+  <div class="ss-title">Thanh toán thành công!</div>
+  <div class="ss-sub">Giao dịch đã hoàn tất.<br>Cửa hàng đã nhận được thông báo.</div>
+  <div class="ss-detail" id="ssDetail"></div>
+  <div class="ss-note">Bạn có thể đóng trang này</div>
+</div>
+
+<script>
+  function vnd(n){return parseInt(n||0).toLocaleString('vi-VN')+' đ'}
+
+  // Clock
+  function updateClock(){
+    const now=new Date();
+    document.getElementById('sbTime').textContent=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+    document.getElementById('timeDisplay').textContent=now.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }
+  updateClock();setInterval(updateClock,1000);
+
+  // Params
+  const params=new URLSearchParams(location.search);
+  const paymentId=params.get('paymentId')||'';
+  const amount=parseInt((params.get('amount')||'0').replace(/\D/g,''))||0;
+  const note=params.get('note')||'CVS-???';
+  const shop=params.get('shop')||'Công Vinh Shop';
+  const bank=params.get('bank')||'MB Bank - 0123456789';
+
+  // Fill UI
+  document.getElementById('bcAmount').textContent=vnd(amount);
+  document.getElementById('bcBank').textContent=bank;
+  document.getElementById('shopName').textContent=shop;
+  document.getElementById('noteDisplay').textContent=note;
+  document.getElementById('totalDisplay').textContent=vnd(amount);
+  document.getElementById('bcOwner').textContent='CONG VINH SHOP';
+
+  // Bio touch
+  let bioUsed=false;
+  function triggerBio(){
+    if(bioUsed)return;
+    const icon=document.getElementById('bioIcon');
+    const status=document.getElementById('bioStatus');
+    icon.style.filter='brightness(1.5)';
+    status.style.color='#f0c040';
+    status.textContent='🔍 Đang quét vân tay...';
+    setTimeout(()=>{
+      icon.textContent='✅';
+      icon.style.filter='none';
+      status.style.color='#56d364';
+      status.textContent='✓ Xác thực thành công!';
+      bioUsed=true;
+      document.getElementById('payBtn').style.animation='pulse 1s ease 3';
+    },1200);
+  }
+
+  // PIN
+  let pin='';
+  function showPin(){document.getElementById('pinSection').style.display='block';document.getElementById('bioIcon').closest('.bio-section').style.display='none'}
+  function showBio(){document.getElementById('pinSection').style.display='none';document.getElementById('bioIcon').closest('.bio-section').style.display='block'}
+  function pinPress(d){
+    if(pin.length>=6)return;
+    pin+=d.toString();
+    updateDots();
+    if(pin.length===6){setTimeout(()=>{bioUsed=true;document.getElementById('bioStatus').textContent='✓ PIN đúng!'},300)}
+  }
+  function pinDel(){pin=pin.slice(0,-1);updateDots()}
+  function updateDots(){
+    document.querySelectorAll('.pin-dot').forEach((el,i)=>{
+      el.classList.toggle('filled',i<pin.length);
+    });
+  }
+
+  // Payment
+  function doPayment(){
+    const btn=document.getElementById('payBtn');
+    btn.disabled=true;
+    const proc=document.getElementById('procOverlay');
+    proc.classList.add('show');
+
+    const steps=['Đang kết nối ngân hàng...','Xác thực giao dịch...','Gửi thông báo cửa hàng...','Hoàn tất!'];
+    let i=0;
+    const t=setInterval(()=>{
+      if(i<steps.length){document.getElementById('procText').textContent=steps[i];i++}
+      else{clearInterval(t);finishPayment()}
+    },700);
+  }
+
+  function finishPayment(){
+    // Notify desktop tab via BroadcastChannel
+    try{
+      const bc=new BroadcastChannel('cvshop_pay_'+paymentId);
+      bc.postMessage({type:'paid',paymentId,amount});
+      bc.close();
+    }catch(e){}
+
+    // Fallback via localStorage
+    try{
+      localStorage.setItem('cvshop_paid_'+paymentId,JSON.stringify({paid:true,amount,ts:Date.now()}));
+      setTimeout(()=>{try{localStorage.removeItem('cvshop_paid_'+paymentId)}catch(e){}},5000);
+    }catch(e){}
+
+    // Show success
+    document.getElementById('procOverlay').classList.remove('show');
+    const ss=document.getElementById('successScreen');
+    ss.classList.add('show');
+
+    const tx='TXN'+Date.now().toString(36).toUpperCase();
+    document.getElementById('ssDetail').innerHTML=`
+      <div class="sd-row"><span>Mã GD</span><span>${tx}</span></div>
+      <div class="sd-row"><span>Số tiền</span><span style="color:#56d364">${vnd(amount)}</span></div>
+      <div class="sd-row"><span>Nội dung</span><span>${note}</span></div>
+      <div class="sd-row"><span>Người nhận</span><span>${shop}</span></div>
+      <div class="sd-row"><span>Thời gian</span><span>${new Date().toLocaleString('vi-VN')}</span></div>
+      <div class="sd-row"><span>Trạng thái</span><span style="color:#56d364">✅ Thành công</span></div>
+    `;
+  }
+</script>
+</body>
+</html>
